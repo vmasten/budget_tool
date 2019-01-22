@@ -65,4 +65,5 @@ class Transaction(models.Model):
 
 @property
 def get_remaining_budget(self):
+    """???"""
     return self.budget.total_budget - self.transaction.amount
