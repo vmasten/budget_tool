@@ -7,6 +7,7 @@
 <div class="budgets">
   <h2>{{ budget.name }}: ${{ budget.total_budget|floatformat:2}}</h2>
   <h2> Money left: ${{budget.remaining_budget|floatformat:2}}</h2>
+  <h3><a href="{% url "transaction_add" %}">Add New Transaction</a><h3>
     {% for transaction in transactions %}
     {% if transaction.budget == budget %}
       {% if transaction.type == 'WITHDRAWAL' %}
