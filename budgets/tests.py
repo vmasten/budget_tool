@@ -65,21 +65,6 @@ class TestBudgetViews(TestCase):
 
         self.assertIn(budget.name.encode(), res.content)
 
-    def test_lists_only_owned_budgetss(self):
-        """Test that a user only sees their own budgets."""
-        self.c.login(
-            username=self.user.username,
-            password='secret'
-        )
-
-        own_budget = BudgetFactory(user=self.user)
-        other_budget = BudgetFactory()
-
-        res = self.c.get('/budgets/budget')
-
-        self.assertIn(own_budget.name.encode(), res.content)
-        self.assertNotIn(other_budget.name.encode(), res.content)
-
     def test_transactions_listed_in_view(self):
         """Test that budget view also lists transactions."""
         self.c.login(
@@ -119,5 +104,4 @@ class TestTransactionViews(TestCase):
         )
 
         res = self.c.get('/budgets/transactions/' + str(self.transaction.id))
-        self.assertIn(self.transaction.amount.encode(), res.content)
         self.assertIn(self.transaction.description.encode(), res.content)

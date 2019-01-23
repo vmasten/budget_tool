@@ -14,7 +14,14 @@ class Budget(models.Model):
 
     name = models.CharField(max_length=180, default='none')
     total_budget = models.FloatField(default='0.0')
-    remaining_budget = models.FloatField(default='0.0')
+    remaining_budget = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        """Sets remaining_budget equal to total_budget on instantiation."""
+        if not self.remaining_budget:
+            self.remaining_budget = self.total_budget
+        super().save(*args, **kwargs)
+        # thanks, Stack Overflow!
 
     def __repr__(self):
         return '<Budget: {}>'.format(self.name)
@@ -68,8 +75,8 @@ class Transaction(models.Model):
 def calculate_remaining_budget(sender, instance, **kwargs):
     """Calculate the remaining budget balance."""
     if instance.type == 'DEPOSIT':
-        instance.budget.remaining_budget += instance.amount
+        instance.budget.remaining_budget += float(instance.amount)
     else:
-        instance.budget.remaining_budget -= instance.amount
+        instance.budget.remaining_budget -= float(instance.amount)
 
     instance.budget.save()
