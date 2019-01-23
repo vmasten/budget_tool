@@ -65,7 +65,7 @@ class TestBudgetViews(TestCase):
 
         self.assertIn(budget.name.encode(), res.content)
 
-    def test_lists_only_owned_budgetss(self):
+    def test_lists_only_owned_budgets(self):
         """Test that a user only sees their own budgets."""
         self.c.login(
             username=self.user.username,
@@ -121,3 +121,54 @@ class TestTransactionViews(TestCase):
         res = self.c.get('/budgets/transactions/' + str(self.transaction.id))
         self.assertIn(self.transaction.amount.encode(), res.content)
         self.assertIn(self.transaction.description.encode(), res.content)
+
+class TestBudgetCreateViews(TestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.user.set_password('secret')
+        self.user.save()
+        self.c = Client()
+
+    def test_create_view_adds_new_budget(self):
+        self.c.login(
+            username=self.user.username,
+            password='secret'
+        )
+
+        form_data = {
+            'name': 'new budget',
+            'total_budget': '100.0'
+        }
+
+        res = self.c.post('/budgets/budget/add', form_data, follow=True)
+
+        # Confirms the record was retrieved from the database and presented in the view
+        self.assertIn(b'new budget', res.content)
+
+
+class TestTransactionCreateViews(TestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.user.set_password('secret')
+        self.user.save()
+
+        self.budget = BudgetFactory(user=self.user)
+
+        self.c = Client()
+
+    def test_create_view_adds_new_transaction(self):
+        self.c.login(
+            username=self.user.username,
+            password='secret'
+        )
+
+        form_data = {
+            'assigned_user': self.user,
+            'type': 'WITHDRAWAL',
+            'description': 'burgers',
+            'amount': '20.0',
+            'budget': self.budget.id
+        }
+
+        res = self.c.post('/budgets/transactions/add/', form_data, follow=True)
+        self.assertIn(b'burgers', res.content)
