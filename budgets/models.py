@@ -1,5 +1,6 @@
 """Models for use in the budget app."""
 from django.db import models
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 
 
@@ -57,13 +58,18 @@ class Transaction(models.Model):
     description = models.CharField(max_length=512, default='transaction')
 
     def __repr__(self):
-            return '<Transaction: {}>'.format(self.name)
+            return '<Transaction: {}>'.format(self.description)
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.description)
 
 
-@property
-def get_remaining_budget(self):
-    """???"""
-    return self.budget.total_budget - self.transaction.amount
+@receiver(models.signals.post_save, sender=Transaction)
+def calculate_remaining_budget(sender, instance, **kwargs):
+    """Calculate the remaining budget balance."""
+    if instance.type == 'DEPOSIT':
+        instance.budget.remaining_budget += instance.amount
+    else:
+        instance.budget.remaining_budget -= instance.amount
+
+    instance.budget.save()
