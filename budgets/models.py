@@ -73,7 +73,7 @@ class Transaction(models.Model):
 
 @receiver(models.signals.post_save, sender=Transaction)
 def calculate_remaining_budget(sender, instance, **kwargs):
-    """Calculate the remaining budget balance."""
+    """Add/subtract transaction to remaining budget balance."""
     if instance.type == 'DEPOSIT':
         instance.budget.remaining_budget += float(instance.amount)
     else:
