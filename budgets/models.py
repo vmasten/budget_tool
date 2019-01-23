@@ -58,16 +58,16 @@ class Transaction(models.Model):
     description = models.CharField(max_length=512, default='transaction')
 
     def __repr__(self):
-            return '<Transaction: {}>'.format(self.name)
+            return '<Transaction: {}>'.format(self.description)
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.description)
 
 
 @receiver(models.signals.post_save, sender=Transaction)
 def calculate_remaining_budget(sender, instance, **kwargs):
     """Calculate the remaining budget balance."""
-    if instance.transaction_type == 'deposit':
+    if instance.type == 'DEPOSIT':
         instance.budget.remaining_budget += instance.amount
     else:
         instance.budget.remaining_budget -= instance.amount
