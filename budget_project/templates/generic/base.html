@@ -21,11 +21,12 @@
         <li><a href="{% url "home" %}">Home</a></li>
         {% if user.is_authenticated %}
         <li><a href="{% url "budget_list" %}">Budgets</a></li>
+        <li><a href="{% url "user-detail" pk=user.id %}">User Details</a></li>
         {% if user.is_superuser %}
         <li><a href="{% url "admin:index" %}">Admin</a></li>
         {% endif %}
         {% else %}
-        <li><a href="{% url "django_registration_register" %}">Signup</a></li>
+        <li><a href="{% url "register" %}">Signup</a></li>
         <li><a href="{% url "login" %}">Signin</a></li>
         {% endif %}
       </ul>
