@@ -173,26 +173,3 @@ class TestTransactionCreateViews(TestCase):
 
         res = self.c.post('/budgets/transactions/add/', form_data, follow=True)
         self.assertIn(b'burgers', res.content)
-
-
-class TestUserAPI(TestCase):
-    """Tests for the RESTful User API"""
-
-    def setUp(self):
-        """Create instances for testing."""
-        self.user = UserFactory()
-        self.user.set_password('secret')
-        self.user.save()
-
-    def test_registration(self):
-        user = {
-            'id': '1',
-            'username': 'test',
-            'email': 'user@example.com',
-            'password': 'codefellows1',
-            'first name': 'fred',
-            'last_name': 'smith',
-        }
-
-        response = self.client.post('/api/v1/register', user)
-        self.assertEqual(response.status_code, 201)
