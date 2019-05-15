@@ -1,5 +1,6 @@
 from django.test import TestCase, Client, RequestFactory
 from budget_project.factories import BudgetFactory, TransactionFactory, UserFactory
+from rest_framework.test import APIRequestFactory
 
 
 class TestBudgetModels(TestCase):
